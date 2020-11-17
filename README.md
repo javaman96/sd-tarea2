@@ -17,20 +17,13 @@ IMPORTANTE: Consideraciones importantes en la tarea
 
 ```bash
 .
-├── clientes
-│   └── client.go
-├── camiones
-│   └── camiones.go
 ├── chat
-│   └── chat.go
-│   └── chat.pb.go
-├── logistica
-│   └── server.go
-├── finanzas
-│   └──
-└── chat.proto
-└── Makefila
-└── README.md
+├── chunk_split.go
+├── clientes
+├── dataNodes
+├── nameNode
+├── README.md
+└── recombine_chunks.go
 ```
 
 OBS: Makefile hará uno de los siguientes comandos, pero
