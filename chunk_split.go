@@ -10,9 +10,16 @@ import (
     "strconv"
     "strings"
     "archive/zip"
+    "encoding/hex"
 )
 
-func ZipFile(filename string) error {    
+func encodeString(titulo string) string {
+    src := []byte(titulo)
+    encodedStr := hex.EncodeToString(src)
+    return encodedStr
+}
+
+func ZipFile(filename string) error {      
 
     newfile, err := os.Create(strings.Split(filename,".pdf")[0] + ".zip")
     if err != nil {
@@ -59,7 +66,8 @@ func main() {
 
     input = strings.TrimSpace(input)
 
-    chunkname := "owo" + "_"
+    chunkname := encodeString(input) + "_"
+    fmt.Println(chunkname)
 
     err := ZipFile(input)
     if err != nil {
@@ -111,7 +119,7 @@ func main() {
         // write/save buffer to disk
         ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)
 
-        fmt.Println("Split to : ", fileName)
+        fmt.Println("Split to: ", fileName)
     }
 
     // Delete remaining zip files

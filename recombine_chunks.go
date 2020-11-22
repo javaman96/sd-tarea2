@@ -98,8 +98,13 @@ func main() {
  
     chunk_list,_ := chunk_dir.Readdirnames(0) // 0 to read all files and folders
 
+    var input string
+    // Pensarlo como un diccionario en el NameNode nombre: Id, o al reves
+    fmt.Printf("\n Ingrese Id del archivo a descargar: ")
+    fmt.Scanln(&input)
+
     for _, name := range chunk_list {
-        if strings.Contains(name, "owo_") {
+        if strings.Contains(name, input + "_") {
             totalPartsNum++
         }
     }
@@ -110,7 +115,7 @@ func main() {
     for j := uint64(0); j < uint64(totalPartsNum); j++ {
 
         //read a chunk
-        currentChunkFileName := "owo_" + strconv.FormatUint(j, 10)
+        currentChunkFileName := input + "_" + strconv.FormatUint(j, 10)
 
         newFileChunk, err := os.Open(currentChunkFileName)
 
