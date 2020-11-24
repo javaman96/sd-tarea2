@@ -1,8 +1,8 @@
 package main
 
-import (    
+import (
     "bufio"
-    "fmt"      
+    "fmt"
     "os"
     "log"
     "strings"
@@ -12,7 +12,7 @@ import (
     "path/filepath"
 )
 
-func unzip(zipfile string){            
+func unzip(zipfile string){
 
     reader, err := zip.OpenReader(zipfile)
     if err != nil {
@@ -82,7 +82,7 @@ func main() {
     // just information on which part of the new file we are appending
     var writePosition int64 = 0
 
-    // Cambiar esta forma por un identificador 
+    // Cambiar esta forma por un identificador
     // para todos los chunks del mismo libro
     // Igual como el ensamblado de fragmentos de capa IP
     ////////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ func main() {
         log.Fatalf("failed opening directory: %s", err)
     }
     defer chunk_dir.Close()
- 
+
     chunk_list,_ := chunk_dir.Readdirnames(0) // 0 to read all files and folders
 
     var input string
@@ -110,7 +110,7 @@ func main() {
     }
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////    
+    ////////////////////////////////////////////////////////////////////////////
 
     for j := uint64(0); j < uint64(totalPartsNum); j++ {
 
@@ -187,13 +187,16 @@ func main() {
     if err != nil {
         log.Fatalf("failed opening directory: %s", err)
     }
-    defer chunk_dir.Close()
- 
+
+
     chunk_list,_ = chunk_dir.Readdirnames(0) // 0 to read all files and folders
 
     for _, name := range chunk_list {
+        fmt.Println("name: ", name)
         if strings.Contains(name, ".zip") {
+            fmt.Println("BORRANDOLO ")
             os.Remove(name)
         }
     }
+    defer chunk_dir.Close()
 }

@@ -71,7 +71,7 @@ IMPORTANTE: Consideraciones acerca del orden de ejecucion de las máquinas
 # Usar proto
 ## Revisar esto a medida que se vaya avanzando!!
 
-se creo un go mod en "github.com/dcordova/sd_tarea_2/chat"
+se creo un go mod en "github.com/dcordova/sd_tarea_2/data_service"
 
 si tocamos el codigo de chat/chat.go debemos usar el comando "go mod tidy"
 
