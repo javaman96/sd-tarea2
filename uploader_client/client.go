@@ -7,13 +7,13 @@ import (
   "google.golang.org/grpc"
   "github.com/dcordova/sd_tarea2/data_service"
 
-  "strings"
+  //"strings"
   //"bufio"
-  "encoding/csv"
-  "fmt"
-  "io"
-  "os"
-  "strconv" // Conversion de strings a int y viceversa
+  //"encoding/csv"
+  //"fmt"
+  //"io"
+  //"os"
+  //"strconv" // Conversion de strings a int y viceversa
 )
 
 
@@ -27,8 +27,10 @@ func main() {
   }
   defer conn.Close()
 
+  c := data_service.NewDataServiceClient(conn)
+
   // Hello world
-  message := chat.Message{
+  message := data_service.Message{
     Body: "Hello from the client!",
   }
 
