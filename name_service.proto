@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package name_service;
+
+message Message {
+  string body = 1;
+}
+
+message LibroInfo {
+  string id = 1;
+  string name = 2;
+}
+
+message ListadoLibros {
+  repeated LibroInfo libros = 1;
+}
+
+service NameService {
+  rpc SayHello(Message) returns (Message) {}
+  rpc PedirNombresLibros(Message) returns (ListadoLibros) {}
+}
