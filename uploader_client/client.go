@@ -17,6 +17,7 @@ import (
   "encoding/hex"
 )
 
+
 func encodeString(titulo string) string {
     src := []byte(titulo)
     encodedStr := hex.EncodeToString(src)
@@ -137,23 +138,18 @@ func main() {
       // write/save buffer to disk
       ioutil.WriteFile(IdLibroyChunk, partBuffer, os.ModeAppend)
       */   
-
-      ///////////////////////////////////////
-      //      Falta borrar enviar aun      //
-      /////////////////////////////////////// 
-
-      // Hello world
+            
       chunk := data_service.Book{
         Chunks: IdLibroyChunk,
-        Data: partBuffer[:5],
+        Data: partBuffer,
       }
 
-      response, err := c.UploadChunks(context.Background(), &chunk)
+      _, err := c.UploadChunks(context.Background(), &chunk)
       if err != nil {
         log.Fatalf("Error when calling Server: %s", err)
       }                    
-      fmt.Println("Split to: ", IdLibroyChunk)
-      log.Printf("Response from Server: %s", response.Chunks)
+      //fmt.Println("Split to: ", IdLibroyChunk)
+      //log.Printf("Response from Server: %s", response.Chunks)
   }  
 
 

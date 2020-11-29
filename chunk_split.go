@@ -72,7 +72,7 @@ func main() {
     input = strings.TrimSpace(input)
 
     chunkname := encodeString(input) + "_"
-    fmt.Println(chunkname)
+    //fmt.Println(chunkname)
 
     err := ZipFile(input)
     if err != nil {
@@ -96,7 +96,7 @@ func main() {
 
     var fileSize int64 = fileInfo.Size()
 
-    fmt.Println(fileSize)
+    //fmt.Println(fileSize)
 
     const fileChunk = 250 * (1 << 10) // 250KB
 
