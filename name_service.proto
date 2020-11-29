@@ -8,7 +8,7 @@ message Message {
 
 message LibroInfo {
   string id = 1;
-  string name = 2;
+  string nombre = 2;
 }
 
 message ListadoLibros {

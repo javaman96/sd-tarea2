@@ -8,7 +8,7 @@ import (
   //"github.com/dcordova/sd_tarea2/data_service"
   "github.com/dcordova/sd_tarea2/name_service"
 
-  //"strings"
+  "strings"
   //"bufio"
   //"encoding/csv"
   "fmt"
@@ -16,6 +16,10 @@ import (
   //"os"
   //"strconv" // Conversion de strings a int y viceversa
 )
+
+
+
+
 
 
 func main() {
@@ -28,14 +32,14 @@ func main() {
   }
   defer conn.Close()
 
-  c := name_service.NewNameServiceClient(conn)
+  s := name_service.NewNameServiceClient(conn)
 
   // Hello world
   message := name_service.Message{
     Body: "Conectandose desde downloader_client!",
   }
 
-  response, err := c.SayHello(context.Background(), &message)
+  response, err := s.SayHello(context.Background(), &message)
   if err != nil {
     log.Fatalf("Error when calling SayHello: %s", err)
   }
@@ -53,8 +57,17 @@ func main() {
 
       /// OPCION 1: ENVIAR TODOS LOS ENCARGOS AL SERVER
       if option == "1" {
-          fmt.Printf("No implementado")
-        }
+          message := name_service.Message{
+            Body: "solicitando lista de libros",
+          }
+          response, err := s.PedirNombresLibros(context.Background(), &message)
+          if err != nil {
+            log.Fatalf("Error when calling SayHello: %s", err)
+          }
+
+          for i, libro := range response.Libros {
+            fmt.Printf("%d Id: %s Nombre: %s\n", i, libro.Id, libro.Nombre)
+          }
       }
 
       if option == "2" {
