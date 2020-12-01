@@ -18,7 +18,7 @@ func save_chunks(chunk_name string, data []byte) {
 	dir := "data_service/chunks/" + chunk_name + ".chunk"
 
 	// create file
-	if err := os.MkdirAll(filepath.Dir(dir), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dir), 0777); err != nil {
         log.Fatal(err)
     }    	
         
