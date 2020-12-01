@@ -3,7 +3,7 @@ package main
 import (
     "fmt"
     "log"
-    "io/ioutil"
+    //"io/ioutil"
     "math"
     "os"
     "io"
@@ -12,6 +12,11 @@ import (
     "archive/zip"
     "encoding/hex"
 )
+
+type IDandBytes struct {
+    IdLyC string
+    BookChunk []byte
+}
 
 func encodeString(titulo string) string {
     src := []byte(titulo)
@@ -67,7 +72,7 @@ func main() {
     input = strings.TrimSpace(input)
 
     chunkname := encodeString(input) + "_"
-    fmt.Println(chunkname)
+    //fmt.Println(chunkname)
 
     err := ZipFile(input)
     if err != nil {
@@ -75,6 +80,7 @@ func main() {
         os.Exit(1)
     }
 
+    // Modificar ruta de prueba
     fileToBeChunked := "./"+strings.Split(input,".pdf")[0] + ".zip"    
 
     file, err := os.Open(fileToBeChunked)
@@ -90,7 +96,7 @@ func main() {
 
     var fileSize int64 = fileInfo.Size()
 
-    fmt.Println(fileSize)
+    //fmt.Println(fileSize)
 
     const fileChunk = 250 * (1 << 10) // 250KB
 
@@ -100,27 +106,36 @@ func main() {
 
     fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)
 
+    showArr := make([]IDandBytes, totalPartsNum)
+
     for i := uint64(0); i < totalPartsNum; i++ {
 
         partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
         partBuffer := make([]byte, partSize)
 
         file.Read(partBuffer)
-
+        
+        IdLibroyChunk := chunkname + strconv.FormatUint(i, 10)
+        /*
         // write to disk
-        fileName := chunkname + strconv.FormatUint(i, 10)
-        _, err := os.Create(fileName)
+        _, err := os.Create(IdLibroyChunk)
 
         if err != nil {
             fmt.Println(err)
             os.Exit(1)
         }
-
+        
         // write/save buffer to disk
-        ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)
+        ioutil.WriteFile(IdLibroyChunk, partBuffer, os.ModeAppend)
+        */    
+    
+        chunk := IDandBytes{IdLyC: IdLibroyChunk, BookChunk: partBuffer[:5]}//quitar el [:5]
+        showArr[i] = chunk        
 
-        fmt.Println("Split to: ", fileName)
+        fmt.Println("Split to: ", IdLibroyChunk)
     }
+
+    fmt.Println(showArr)
 
     // Delete remaining zip files
     chunk_dir, err := os.Open(".")

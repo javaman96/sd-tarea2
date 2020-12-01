@@ -2,10 +2,12 @@ syntax = "proto3";
 
 package data_service;
 
-message Message {
-  string body = 1;
+message Book {
+  string chunks = 1;
+  bytes data = 2;
 }
 
 service DataService {
-  rpc SayHello(Message) returns (Message) {}
+  rpc UploadChunks(Book) returns (Book) {}
 }
+
