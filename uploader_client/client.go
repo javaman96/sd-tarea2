@@ -67,6 +67,7 @@ func ZipFile(filename string) error {
 func main() {
 
   // Conectarse como cliente al servidor1 //
+  
   var conn *grpc.ClientConn
   conn, err := grpc.Dial(":9001", grpc.WithInsecure())
   if err != nil {
@@ -76,32 +77,6 @@ func main() {
 
   c := data_service.NewDataServiceClient(conn)
 
-  //--------------------------------------------------//
-
-  // Conectarse como cliente al servidor2 //
-  var conn2 *grpc.ClientConn
-  conn2, err = grpc.Dial(":9002", grpc.WithInsecure())
-  if err != nil {
-    log.Fatalf("Could not connect to 9002: %s", err)
-  }
-  defer conn2.Close()
-
-  c2 := data_service.NewDataServiceClient(conn)
-
-  //--------------------------------------------------//
-
-  // Conectarse como cliente al servidor3 //
-  var conn3 *grpc.ClientConn
-  conn3, err = grpc.Dial(":9003", grpc.WithInsecure())
-  if err != nil {
-    log.Fatalf("Could not connect to 9003: %s", err)
-  }
-  defer conn3.Close()
-
-  c3 := data_service.NewDataServiceClient(conn)
-
-  //--------------------------------------------------//
-
   var input string
   fmt.Printf("\n Ingrese nombre completo del archivo (archivo.pdf): ")
   fmt.Scanln(&input)
@@ -109,7 +84,6 @@ func main() {
   input = strings.TrimSpace(input)
 
   chunkname := encodeString(input) + "_"
-  //fmt.Println(chunkname)
 
   err = ZipFile(input)
   if err != nil {
@@ -133,54 +107,42 @@ func main() {
 
   var fileSize int64 = fileInfo.Size()
 
-  //fmt.Println(fileSize)
-
   const fileChunk = 250 * (1 << 10) // 250KB
 
-  // calculate total number of parts the file will be chunked into
-
+  // Calcular numero de chunks
   totalPartsNum := int(math.Ceil(float64(fileSize) / float64(fileChunk)))
 
   fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)  
 
+  // Enviar los chunks al server
+  stream, err := c.UploadChunks(context.Background())
+  if err != nil {
+    log.Fatalf("Error when calling Server: %s", err)
+  }
+
   for i := 0; i < totalPartsNum; i++ {
 
+    // Escribir chunk en buffer, luego en el disco
     partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
+
+    // Data de un chunk
     partBuffer := make([]byte, partSize)
 
     file.Read(partBuffer)
     
-    IdLibroyChunk := chunkname + strconv.Itoa(i)      
-                
-    chunk := data_service.Book{
-      Chunks: IdLibroyChunk,
-      Data: partBuffer,
+    // Id de un chunk
+    IdLibroyChunk := chunkname + strconv.Itoa(i)  
+    chunk := &data_service.Chunk{Id: IdLibroyChunk, Data: partBuffer}                    
+
+    if err := stream.Send(chunk); err != nil {
+      log.Fatalf("Error al enviar: %v", stream)
     }
+  } 
 
-    // Por ahora el criterio es enviar a cada server una porcion
-
-    if i < int(math.Ceil(float64(totalPartsNum)/3)){    
-
-      _, err := c.UploadChunks(context.Background(), &chunk)
-      if err != nil {
-        log.Fatalf("Error when calling Server: %s", err)
-      }      
-    }else if i < int(2*math.Ceil(float64(totalPartsNum)/3)){   
-      
-      _, err := c2.UploadChunks(context.Background(), &chunk)
-      if err != nil {
-        log.Fatalf("Error when calling Server: %s", err)
-      }      
-    }else if i < int(3*math.Ceil(float64(totalPartsNum)/3)){
-      
-      _, err := c3.UploadChunks(context.Background(), &chunk)
-      if err != nil {
-        log.Fatalf("Error when calling Server: %s", err)
-      } 
-    }
-  }  
-
-
+  _, err = stream.CloseAndRecv()
+  if err != nil {
+    log.Fatalf("%v.CloseAndRecv() got error %v, want %v", stream, err, nil)
+  }
 
   // Delete remaining zip files
   _dir, err := os.Open(".")

@@ -29,17 +29,16 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Book struct {
+type Message struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Chunks string `protobuf:"bytes,1,opt,name=chunks,proto3" json:"chunks,omitempty"`
-	Data   []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Body string `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
 }
 
-func (x *Book) Reset() {
-	*x = Book{}
+func (x *Message) Reset() {
+	*x = Message{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_data_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -47,13 +46,13 @@ func (x *Book) Reset() {
 	}
 }
 
-func (x *Book) String() string {
+func (x *Message) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Book) ProtoMessage() {}
+func (*Message) ProtoMessage() {}
 
-func (x *Book) ProtoReflect() protoreflect.Message {
+func (x *Message) ProtoReflect() protoreflect.Message {
 	mi := &file_data_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -65,19 +64,67 @@ func (x *Book) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Book.ProtoReflect.Descriptor instead.
-func (*Book) Descriptor() ([]byte, []int) {
+// Deprecated: Use Message.ProtoReflect.Descriptor instead.
+func (*Message) Descriptor() ([]byte, []int) {
 	return file_data_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Book) GetChunks() string {
+func (x *Message) GetBody() string {
 	if x != nil {
-		return x.Chunks
+		return x.Body
 	}
 	return ""
 }
 
-func (x *Book) GetData() []byte {
+type Chunk struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+}
+
+func (x *Chunk) Reset() {
+	*x = Chunk{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_data_service_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Chunk) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Chunk) ProtoMessage() {}
+
+func (x *Chunk) ProtoReflect() protoreflect.Message {
+	mi := &file_data_service_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Chunk.ProtoReflect.Descriptor instead.
+func (*Chunk) Descriptor() ([]byte, []int) {
+	return file_data_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Chunk) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Chunk) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
@@ -89,15 +136,21 @@ var File_data_service_proto protoreflect.FileDescriptor
 var file_data_service_proto_rawDesc = []byte{
 	0x0a, 0x12, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0c, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
-	0x63, 0x65, 0x22, 0x32, 0x0a, 0x04, 0x42, 0x6f, 0x6f, 0x6b, 0x12, 0x16, 0x0a, 0x06, 0x63, 0x68,
-	0x75, 0x6e, 0x6b, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x63, 0x68, 0x75, 0x6e,
-	0x6b, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c,
-	0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0x47, 0x0a, 0x0b, 0x44, 0x61, 0x74, 0x61, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x0c, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x43,
-	0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x12, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x2e, 0x42, 0x6f, 0x6f, 0x6b, 0x1a, 0x12, 0x2e, 0x64, 0x61, 0x74, 0x61,
-	0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x42, 0x6f, 0x6f, 0x6b, 0x22, 0x00, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x63, 0x65, 0x22, 0x1d, 0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x0a,
+	0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64,
+	0x79, 0x22, 0x2b, 0x0a, 0x05, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61,
+	0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0x89,
+	0x01, 0x0a, 0x0b, 0x44, 0x61, 0x74, 0x61, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3e,
+	0x0a, 0x0c, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x13,
+	0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x68,
+	0x75, 0x6e, 0x6b, 0x1a, 0x15, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x28, 0x01, 0x12, 0x3a,
+	0x0a, 0x0a, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x13, 0x2e, 0x64,
+	0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x68, 0x75, 0x6e,
+	0x6b, 0x1a, 0x15, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -112,15 +165,18 @@ func file_data_service_proto_rawDescGZIP() []byte {
 	return file_data_service_proto_rawDescData
 }
 
-var file_data_service_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_data_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_data_service_proto_goTypes = []interface{}{
-	(*Book)(nil), // 0: data_service.Book
+	(*Message)(nil), // 0: data_service.Message
+	(*Chunk)(nil),   // 1: data_service.Chunk
 }
 var file_data_service_proto_depIdxs = []int32{
-	0, // 0: data_service.DataService.UploadChunks:input_type -> data_service.Book
-	0, // 1: data_service.DataService.UploadChunks:output_type -> data_service.Book
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	1, // 0: data_service.DataService.UploadChunks:input_type -> data_service.Chunk
+	1, // 1: data_service.DataService.SendChunks:input_type -> data_service.Chunk
+	0, // 2: data_service.DataService.UploadChunks:output_type -> data_service.Message
+	0, // 3: data_service.DataService.SendChunks:output_type -> data_service.Message
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -133,7 +189,19 @@ func file_data_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_data_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Book); i {
+			switch v := v.(*Message); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_data_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Chunk); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -151,7 +219,7 @@ func file_data_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_data_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -177,7 +245,8 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DataServiceClient interface {
-	UploadChunks(ctx context.Context, in *Book, opts ...grpc.CallOption) (*Book, error)
+	UploadChunks(ctx context.Context, opts ...grpc.CallOption) (DataService_UploadChunksClient, error)
+	SendChunks(ctx context.Context, in *Chunk, opts ...grpc.CallOption) (*Message, error)
 }
 
 type dataServiceClient struct {
@@ -188,9 +257,43 @@ func NewDataServiceClient(cc grpc.ClientConnInterface) DataServiceClient {
 	return &dataServiceClient{cc}
 }
 
-func (c *dataServiceClient) UploadChunks(ctx context.Context, in *Book, opts ...grpc.CallOption) (*Book, error) {
-	out := new(Book)
-	err := c.cc.Invoke(ctx, "/data_service.DataService/UploadChunks", in, out, opts...)
+func (c *dataServiceClient) UploadChunks(ctx context.Context, opts ...grpc.CallOption) (DataService_UploadChunksClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_DataService_serviceDesc.Streams[0], "/data_service.DataService/UploadChunks", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &dataServiceUploadChunksClient{stream}
+	return x, nil
+}
+
+type DataService_UploadChunksClient interface {
+	Send(*Chunk) error
+	CloseAndRecv() (*Message, error)
+	grpc.ClientStream
+}
+
+type dataServiceUploadChunksClient struct {
+	grpc.ClientStream
+}
+
+func (x *dataServiceUploadChunksClient) Send(m *Chunk) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *dataServiceUploadChunksClient) CloseAndRecv() (*Message, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(Message)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *dataServiceClient) SendChunks(ctx context.Context, in *Chunk, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/data_service.DataService/SendChunks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -199,35 +302,65 @@ func (c *dataServiceClient) UploadChunks(ctx context.Context, in *Book, opts ...
 
 // DataServiceServer is the server API for DataService service.
 type DataServiceServer interface {
-	UploadChunks(context.Context, *Book) (*Book, error)
+	UploadChunks(DataService_UploadChunksServer) error
+	SendChunks(context.Context, *Chunk) (*Message, error)
 }
 
 // UnimplementedDataServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedDataServiceServer struct {
 }
 
-func (*UnimplementedDataServiceServer) UploadChunks(context.Context, *Book) (*Book, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadChunks not implemented")
+func (*UnimplementedDataServiceServer) UploadChunks(DataService_UploadChunksServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadChunks not implemented")
+}
+func (*UnimplementedDataServiceServer) SendChunks(context.Context, *Chunk) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendChunks not implemented")
 }
 
 func RegisterDataServiceServer(s *grpc.Server, srv DataServiceServer) {
 	s.RegisterService(&_DataService_serviceDesc, srv)
 }
 
-func _DataService_UploadChunks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Book)
+func _DataService_UploadChunks_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DataServiceServer).UploadChunks(&dataServiceUploadChunksServer{stream})
+}
+
+type DataService_UploadChunksServer interface {
+	SendAndClose(*Message) error
+	Recv() (*Chunk, error)
+	grpc.ServerStream
+}
+
+type dataServiceUploadChunksServer struct {
+	grpc.ServerStream
+}
+
+func (x *dataServiceUploadChunksServer) SendAndClose(m *Message) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *dataServiceUploadChunksServer) Recv() (*Chunk, error) {
+	m := new(Chunk)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _DataService_SendChunks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Chunk)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DataServiceServer).UploadChunks(ctx, in)
+		return srv.(DataServiceServer).SendChunks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/data_service.DataService/UploadChunks",
+		FullMethod: "/data_service.DataService/SendChunks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DataServiceServer).UploadChunks(ctx, req.(*Book))
+		return srv.(DataServiceServer).SendChunks(ctx, req.(*Chunk))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -237,10 +370,16 @@ var _DataService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*DataServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "UploadChunks",
-			Handler:    _DataService_UploadChunks_Handler,
+			MethodName: "SendChunks",
+			Handler:    _DataService_SendChunks_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadChunks",
+			Handler:       _DataService_UploadChunks_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "data_service.proto",
 }

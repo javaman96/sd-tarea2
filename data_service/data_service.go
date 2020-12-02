@@ -2,18 +2,22 @@ package data_service
 
 import (
     "log"
-    //"fmt"
+    "fmt"
+    "io"
     "io/ioutil"
     "os"
     "path/filepath"
+    "strconv"
+    "math"
     "golang.org/x/net/context"
+    "google.golang.org/grpc"
 )
 
 
 
 
 // Guardar los chunks en el disco de la machina
-func save_chunks(chunk_name string, data []byte) {
+func (s *Server) save_chunks(chunk_name string, data []byte) {
 	//fmt.Println(chunk_name)
 	dir := "data_service/chunks/" + chunk_name + ".chunk"
 
@@ -26,16 +30,86 @@ func save_chunks(chunk_name string, data []byte) {
 	ioutil.WriteFile(dir, data, os.ModeAppend)	
 }
 
+
 type Server struct {	
 }
 
-func (s *Server) UploadChunks(ctx context.Context, message *Book) (*Book, error) {
 
-	res := make([]byte, 1) // inutil respuesta
+func (s *Server) GenerarPropuesta(chunks []*Chunk) {
 
-	save_chunks(string(message.Chunks), message.Data)
+    //"nombre/lugar; nombre/lugar; nombre/lugar; nombre/lugar; "
 
-    log.Printf("Received chunk: %s", message.Chunks)
-    //fmt.Println(message.Data)
-    return &Book{Chunks: message.Chunks, Data: res}, nil //&Book{}, nil 
+    totalPartsNum := len(chunks)
+
+    for i := 0; i < totalPartsNum; i++ {
+        if i < int(math.Ceil(float64(totalPartsNum)/3)){    
+
+            fmt.Println("S1: ", strconv.Itoa(i))
+
+        }else if i < int(2*math.Ceil(float64(totalPartsNum)/3)){   
+            
+            var conn2 *grpc.ClientConn
+            conn2, err := grpc.Dial(":9002", grpc.WithInsecure())
+            if err != nil {
+                log.Fatalf("Could not connect to 9002: %s", err)
+            }
+            defer conn2.Close()
+
+            c2 := NewDataServiceClient(conn2)
+
+            _, err = c2.SendChunks(context.Background(), chunks[i])
+            if err != nil {
+                log.Fatalf("Error when calling Server 2: %s", err)
+            } 
+               
+            fmt.Println("S2: ", strconv.Itoa(i)) 
+
+        }else if i < int(3*math.Ceil(float64(totalPartsNum)/3)){
+            
+            var conn3 *grpc.ClientConn
+            conn3, err := grpc.Dial(":9003", grpc.WithInsecure())
+            if err != nil {
+                log.Fatalf("Could not connect to 9003: %s", err)
+            }
+            defer conn3.Close()
+
+            c3 := NewDataServiceClient(conn3)
+
+            _, err = c3.SendChunks(context.Background(), chunks[i])
+            if err != nil {
+                log.Fatalf("Error when calling Server 3: %s", err)
+            }
+            
+            fmt.Println("S3: ", strconv.Itoa(i))
+        }
+    }
+}
+
+
+
+func (s *Server) UploadChunks(stream DataService_UploadChunksServer) (error) {    
+
+    chunkArr := []*Chunk{}
+	for {
+
+        chunk, err := stream.Recv()        
+               
+        if err == io.EOF {   
+            go s.GenerarPropuesta(chunkArr)         
+            return stream.SendAndClose(&Message{Body: "Received!"})
+        }
+        if err != nil {
+            return err
+        }
+        //save_chunks(string(chunk.Id), chunk.Data)
+        chunkArr = append(chunkArr, chunk)
+        fmt.Println(chunk.Id)
+    }    
+}
+
+func (s *Server) SendChunks(ctx context.Context, chunk *Chunk) (*Message, error) {
+
+    //s.save_chunks(string(chunk.Id), chunk.Data)
+    fmt.Println(chunk.Id)
+    return &Message{Body: "Recibido!"}, nil
 }
