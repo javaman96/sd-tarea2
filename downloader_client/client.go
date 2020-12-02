@@ -62,16 +62,29 @@ func main() {
           }
           response, err := s.PedirNombresLibros(context.Background(), &message)
           if err != nil {
-            log.Fatalf("Error when calling SayHello: %s", err)
+            log.Fatalf("Error al llamar a PedirNombresLibros: %s", err)
           }
 
           for i, libro := range response.Libros {
-            fmt.Printf("%d Id: %s Nombre: %s\n", i, libro.Id, libro.Nombre)
+            fmt.Printf("%d - Nombre: %s\n", i, libro.Nombre)
           }
       }
 
       if option == "2" {
-        fmt.Printf("No implementado")
+        fmt.Printf("Ingrese nombre del libro: ")
+        fmt.Scanln(&input)
+
+        // Solicitar chunks
+        message := name_service.LibroInfo{
+          Nombre: input,
+        }
+        response, err := s.PedirChunksLibro(context.Background(), &message)
+        if err != nil {
+          log.Fatalf("Error al llamar a PedirChunksLibro: %s", err)
+        }
+        for _, chunk := range response.Chunks {
+          fmt.Printf("Nombre_chunk: %s - Ip_maquina: %s\n", chunk.Nombrechunk, chunk.Ipmaquina)
+        }
       }
     }
 }

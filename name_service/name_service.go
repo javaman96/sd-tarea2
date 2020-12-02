@@ -50,10 +50,54 @@ func (s *Server) PedirNombresLibros(ctx context.Context, message *Message) (*Lis
 
       number, _ := strconv.Atoi(cantidad_chunks)
       i += int(number)
-      retorno = append(retorno, &LibroInfo{Id:"Id", Nombre:nombre_libro})
+      retorno = append(retorno, &LibroInfo{Nombre:nombre_libro})
     }
 
     return &ListadoLibros{Libros: retorno}, nil
+}
+
+
+func (s *Server) PedirChunksLibro(ctx context.Context, libro_solicitado *LibroInfo) (*LibroChunks, error) {
+
+  retorno := []*ChunkIp{}
+
+  logs_file, err:= os.Open("name_node/logs/logs.txt")
+  if err != nil {
+    log.Fatal(err)
+    return nil, err
+  }
+
+  scanner := bufio.NewScanner(logs_file)
+  scanner.Split(bufio.ScanLines)
+  var file_lines []string
+  for scanner.Scan() {
+      file_lines = append(file_lines, scanner.Text())
+  }
+
+  logs_file.Close()
+
+  for i := 0; i < len(file_lines); i++ {
+    s := strings.Split(file_lines[i], " ")
+    nombre_libro, cantidad_chunks := s[0],s[1]
+    numero_chunks, _ := strconv.Atoi(cantidad_chunks)
+    if nombre_libro == libro_solicitado.Nombre {
+      var j = 0
+      for j < int(numero_chunks) {
+        i++
+        j++
+        s := strings.Split(file_lines[i], " ")
+        nombre_chunk, ip_maquina := s[0],s[1]
+        //log.Printf("nombre_chunk: %s\n", nombre_chunk)
+        retorno = append(retorno, &ChunkIp{Nombrechunk: nombre_chunk, Ipmaquina: ip_maquina})
+      }
+      return &LibroChunks{Nombre: libro_solicitado.Nombre, Chunks: retorno}, nil
+    } else {
+      
+      i += int(numero_chunks)
+    }
+    
+  }
+  return &LibroChunks{}, nil
 }
 
 // Pedir lista de libros

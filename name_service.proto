@@ -7,15 +7,28 @@ message Message {
 }
 
 message LibroInfo {
-  string id = 1;
-  string nombre = 2;
+  string nombre = 1;
 }
 
 message ListadoLibros {
   repeated LibroInfo libros = 1;
 }
 
+message ChunkIp {
+  string nombrechunk = 1;
+  string ipmaquina = 2;
+}
+
+message LibroChunks {
+  string nombre = 1;
+  repeated ChunkIp chunks = 2;
+}
+
+
+
 service NameService {
   rpc SayHello(Message) returns (Message) {}
   rpc PedirNombresLibros(Message) returns (ListadoLibros) {}
+  rpc PedirChunksLibro(LibroInfo) returns (LibroChunks) {}
 }
+
