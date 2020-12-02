@@ -14,5 +14,6 @@ message Chunk {
 service DataService {
   rpc UploadChunks(stream Chunk) returns (Message) {}
   rpc SendChunks(Chunk) returns (Message) {}
+  rpc RecuperarChunks(Message) returns (Chunk) {}
 }
 

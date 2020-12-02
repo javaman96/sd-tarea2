@@ -81,14 +81,7 @@ func main() {
 
     // just information on which part of the new file we are appending
     var writePosition int64 = 0
-
-    // Cambiar esta forma por un identificador
-    // para todos los chunks del mismo libro
-    // Igual como el ensamblado de fragmentos de capa IP
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
+    
     totalPartsNum := 0
     chunk_dir, err := os.Open(".")
     if err != nil {
@@ -98,8 +91,7 @@ func main() {
 
     chunk_list,_ := chunk_dir.Readdirnames(0) // 0 to read all files and folders
 
-    var input string
-    // Pensarlo como un diccionario en el NameNode nombre: Id, o al reves
+    var input string    
     fmt.Printf("\n Ingrese Id del archivo a descargar: ")
     fmt.Scanln(&input)
 
