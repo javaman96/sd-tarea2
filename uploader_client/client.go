@@ -66,16 +66,16 @@ func ZipFile(filename string) error {
 
 func main() {
 
-  // Conectarse como cliente al servidor //
+  // Conectarse como cliente al servidor1 //
+  
   var conn *grpc.ClientConn
-  conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+  conn, err := grpc.Dial(":9001", grpc.WithInsecure())
   if err != nil {
-    log.Fatalf("Could not connect: %s", err)
+    log.Fatalf("Could not connect to 9001: %s", err)
   }
   defer conn.Close()
 
   c := data_service.NewDataServiceClient(conn)
-
 
   var input string
   fmt.Printf("\n Ingrese nombre completo del archivo (archivo.pdf): ")
@@ -84,7 +84,6 @@ func main() {
   input = strings.TrimSpace(input)
 
   chunkname := encodeString(input) + "_"
-  //fmt.Println(chunkname)
 
   err = ZipFile(input)
   if err != nil {
@@ -108,61 +107,53 @@ func main() {
 
   var fileSize int64 = fileInfo.Size()
 
-  //fmt.Println(fileSize)
-
   const fileChunk = 250 * (1 << 10) // 250KB
 
-  // calculate total number of parts the file will be chunked into
-
-  totalPartsNum := uint64(math.Ceil(float64(fileSize) / float64(fileChunk)))
+  // Calcular numero de chunks
+  totalPartsNum := int(math.Ceil(float64(fileSize) / float64(fileChunk)))
 
   fmt.Printf("Splitting to %d pieces.\n", totalPartsNum)  
 
-  for i := uint64(0); i < totalPartsNum; i++ {
+  // Enviar los chunks al server
+  stream, err := c.UploadChunks(context.Background())
+  if err != nil {
+    log.Fatalf("Error when calling Server: %s", err)
+  }
 
-      partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
-      partBuffer := make([]byte, partSize)
+  for i := 0; i < totalPartsNum; i++ {
 
-      file.Read(partBuffer)
-      
-      IdLibroyChunk := chunkname + strconv.FormatUint(i, 10)
-      /*
-      // write to disk
-      _, err := os.Create(IdLibroyChunk)
+    // Escribir chunk en buffer, luego en el disco
+    partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
 
-      if err != nil {
-          fmt.Println(err)
-          os.Exit(1)
-      }
-      
-      // write/save buffer to disk
-      ioutil.WriteFile(IdLibroyChunk, partBuffer, os.ModeAppend)
-      */   
-            
-      chunk := data_service.Book{
-        Chunks: IdLibroyChunk,
-        Data: partBuffer,
-      }
+    // Data de un chunk
+    partBuffer := make([]byte, partSize)
 
-      _, err := c.UploadChunks(context.Background(), &chunk)
-      if err != nil {
-        log.Fatalf("Error when calling Server: %s", err)
-      }                    
-      //fmt.Println("Split to: ", IdLibroyChunk)
-      //log.Printf("Response from Server: %s", response.Chunks)
-  }  
+    file.Read(partBuffer)
+    
+    // Id de un chunk
+    IdLibroyChunk := chunkname + strconv.Itoa(i)  
+    chunk := &data_service.Chunk{Id: IdLibroyChunk, Data: partBuffer}                    
 
+    if err := stream.Send(chunk); err != nil {
+      log.Fatalf("Error al enviar: %v", stream)
+    }
+  } 
+
+  _, err = stream.CloseAndRecv()
+  if err != nil {
+    log.Fatalf("%v.CloseAndRecv() got error %v, want %v", stream, err, nil)
+  }
 
   // Delete remaining zip files
-  chunk_dir, err := os.Open(".")
+  _dir, err := os.Open(".")
   if err != nil {
       log.Fatalf("failed opening directory: %s", err)
   }
-  defer chunk_dir.Close()
+  defer _dir.Close()
 
-  chunk_list,_ := chunk_dir.Readdirnames(0) // 0 to read all files and folders
+  file_list,_ := _dir.Readdirnames(0) // 0 to read all files and folders
 
-  for _, name := range chunk_list {
+  for _, name := range file_list {
       if strings.Contains(name, ".zip") {
           os.Remove(name)
       }
