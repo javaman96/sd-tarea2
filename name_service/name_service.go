@@ -97,16 +97,55 @@ func (s *Server) PedirChunksLibro(ctx context.Context, libro_solicitado *LibroIn
 		} else {
 			i += int(numero_chunks)
 		}
-
 	}
 	return &DistribucionChunks{}, nil
 }
 
 func (s *Server) SolicitarPropuesta(ctx context.Context, chunks_nombres *DistribucionChunks) (*DistribucionChunks, error) {
 
-	//totalPartsNum := int(len(chunks_nombres.Chunks))
+	totalPartsNum := int(len(chunks_nombres.Chunks))
 
-	//Generar nueva propuesta
+	//////          Validar      //////////
+	//Debido a que la generación de la propuesta tenderá a siempre ser correcta,
+	// Se hará un random para rechazarla, 30% de prob
+	log.Println("Validando propuesta.")
+
+	///// Generar nueva propuesta ///////
+
+	//Escriber propuesta en el final del archivo logs
+	f, err := os.OpenFile("name_node/logs/logs.txt",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+
+	fi, err := os.Stat("name_node/logs/logs.txt")
+	if fi.Size() != 0 {
+		if _, err := f.WriteString("\n"); err != nil {
+			log.Println(err)
+		}
+	}
+	// Escribir nombre + cantidad de chunks
+	if _, err := f.WriteString(chunks_nombres.Nombrelibro + " " + strconv.Itoa(totalPartsNum) + "\n"); err != nil {
+		log.Println(err)
+	}
+
+	for i, chunk := range chunks_nombres.Chunks {
+
+		// Escribir 1 chunk en logs
+		if _, err := f.WriteString(chunk.Nombrechunk + " " + chunk.Ipmaquina); err != nil {
+			log.Println(err)
+		}
+		if i != len(chunks_nombres.Chunks)-1 {
+			// Escribir salto de linea si no es la ultima linea
+			if _, err := f.WriteString("\n"); err != nil {
+				log.Println(err)
+			}
+		}
+	}
+
+	log.Println("Se escribio en logs.")
 
 	return chunks_nombres, nil
 }
