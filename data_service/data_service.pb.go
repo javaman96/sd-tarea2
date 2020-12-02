@@ -140,7 +140,7 @@ var file_data_service_proto_rawDesc = []byte{
 	0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64,
 	0x79, 0x22, 0x2b, 0x0a, 0x05, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61,
-	0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0x89,
+	0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0xca,
 	0x01, 0x0a, 0x0b, 0x44, 0x61, 0x74, 0x61, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3e,
 	0x0a, 0x0c, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x13,
 	0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x68,
@@ -149,8 +149,12 @@ var file_data_service_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x53, 0x65, 0x6e, 0x64, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x13, 0x2e, 0x64,
 	0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x68, 0x75, 0x6e,
 	0x6b, 0x1a, 0x15, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x3f, 0x0a, 0x0f, 0x52, 0x65,
+	0x63, 0x75, 0x70, 0x65, 0x72, 0x61, 0x72, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x73, 0x12, 0x15, 0x2e,
+	0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x1a, 0x13, 0x2e, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x43, 0x68, 0x75, 0x6e, 0x6b, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -173,10 +177,12 @@ var file_data_service_proto_goTypes = []interface{}{
 var file_data_service_proto_depIdxs = []int32{
 	1, // 0: data_service.DataService.UploadChunks:input_type -> data_service.Chunk
 	1, // 1: data_service.DataService.SendChunks:input_type -> data_service.Chunk
-	0, // 2: data_service.DataService.UploadChunks:output_type -> data_service.Message
-	0, // 3: data_service.DataService.SendChunks:output_type -> data_service.Message
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	0, // 2: data_service.DataService.RecuperarChunks:input_type -> data_service.Message
+	0, // 3: data_service.DataService.UploadChunks:output_type -> data_service.Message
+	0, // 4: data_service.DataService.SendChunks:output_type -> data_service.Message
+	1, // 5: data_service.DataService.RecuperarChunks:output_type -> data_service.Chunk
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -247,6 +253,7 @@ const _ = grpc.SupportPackageIsVersion6
 type DataServiceClient interface {
 	UploadChunks(ctx context.Context, opts ...grpc.CallOption) (DataService_UploadChunksClient, error)
 	SendChunks(ctx context.Context, in *Chunk, opts ...grpc.CallOption) (*Message, error)
+	RecuperarChunks(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Chunk, error)
 }
 
 type dataServiceClient struct {
@@ -300,10 +307,20 @@ func (c *dataServiceClient) SendChunks(ctx context.Context, in *Chunk, opts ...g
 	return out, nil
 }
 
+func (c *dataServiceClient) RecuperarChunks(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Chunk, error) {
+	out := new(Chunk)
+	err := c.cc.Invoke(ctx, "/data_service.DataService/RecuperarChunks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DataServiceServer is the server API for DataService service.
 type DataServiceServer interface {
 	UploadChunks(DataService_UploadChunksServer) error
 	SendChunks(context.Context, *Chunk) (*Message, error)
+	RecuperarChunks(context.Context, *Message) (*Chunk, error)
 }
 
 // UnimplementedDataServiceServer can be embedded to have forward compatible implementations.
@@ -315,6 +332,9 @@ func (*UnimplementedDataServiceServer) UploadChunks(DataService_UploadChunksServ
 }
 func (*UnimplementedDataServiceServer) SendChunks(context.Context, *Chunk) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendChunks not implemented")
+}
+func (*UnimplementedDataServiceServer) RecuperarChunks(context.Context, *Message) (*Chunk, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecuperarChunks not implemented")
 }
 
 func RegisterDataServiceServer(s *grpc.Server, srv DataServiceServer) {
@@ -365,6 +385,24 @@ func _DataService_SendChunks_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DataService_RecuperarChunks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataServiceServer).RecuperarChunks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/data_service.DataService/RecuperarChunks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataServiceServer).RecuperarChunks(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _DataService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "data_service.DataService",
 	HandlerType: (*DataServiceServer)(nil),
@@ -372,6 +410,10 @@ var _DataService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendChunks",
 			Handler:    _DataService_SendChunks_Handler,
+		},
+		{
+			MethodName: "RecuperarChunks",
+			Handler:    _DataService_RecuperarChunks_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

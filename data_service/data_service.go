@@ -31,6 +31,48 @@ func (s *Server) save_chunks(chunk_name string, data []byte) {
 }
 
 
+func (s *Server) read_chunks(currentChunkFileName string) {
+    
+    //read a chunk
+    //currentChunkFileName := input + "_" + strconv.FormatUint(j, 10)
+
+    newFileChunk, err := os.Open(currentChunkFileName)
+
+    if err != nil {
+        return err
+        os.Exit(1)
+    }
+
+    defer newFileChunk.Close()
+
+    chunkInfo, err := newFileChunk.Stat()
+
+    if err != nil {
+        return err
+        os.Exit(1)
+    }
+
+    // calculate the bytes size of each chunk
+    // we are not going to rely on previous data and constant
+
+    var chunkSize int64 = chunkInfo.Size()
+    chunkBufferBytes := make([]byte, chunkSize)
+
+    //fmt.Println("Appending at position : [", writePosition, "] bytes")
+    //writePosition = writePosition + chunkSize
+
+    // read into chunkBufferBytes
+    reader := bufio.NewReader(newFileChunk)
+    _, err = reader.Read(chunkBufferBytes)
+
+    if err != nil {
+        return err
+        os.Exit(1)
+    }  
+    return chunkBufferBytes
+}
+
+
 type Server struct {	
 }
 
@@ -109,7 +151,13 @@ func (s *Server) UploadChunks(stream DataService_UploadChunksServer) (error) {
 
 func (s *Server) SendChunks(ctx context.Context, chunk *Chunk) (*Message, error) {
 
-    //s.save_chunks(string(chunk.Id), chunk.Data)
+    s.save_chunks(string(chunk.Id), chunk.Data)
     fmt.Println(chunk.Id)
     return &Message{Body: "Recibido!"}, nil
+}
+
+func (s *Server) RecuperarChunks(ctx context.Context, message *Message) (*Chunk, error) {
+
+    data := s.read_chunks(string(chunk.Id))    
+    return &Chunk{Id: message, Data: data}, nil
 }
