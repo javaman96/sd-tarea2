@@ -10,6 +10,12 @@ message LibroInfo {
   string nombre = 1;
 }
 
+// Libro mas su numero de chunks, necesario para crear una propuesta
+message LibroNumeroChunk {
+  string nombre = 1;
+  int32 cantidadchunks = 2;
+}
+
 message ListadoLibros {
   repeated LibroInfo libros = 1;
 }
@@ -19,8 +25,8 @@ message ChunkIp {
   string ipmaquina = 2;
 }
 
-message LibroChunks {
-  string nombre = 1;
+message DistribucionChunks {
+  string nombrelibro = 1;
   repeated ChunkIp chunks = 2;
 }
 
@@ -29,6 +35,7 @@ message LibroChunks {
 service NameService {
   rpc SayHello(Message) returns (Message) {}
   rpc PedirNombresLibros(Message) returns (ListadoLibros) {}
-  rpc PedirChunksLibro(LibroInfo) returns (LibroChunks) {}
+  rpc PedirChunksLibro(LibroInfo) returns (DistribucionChunks) {}
+  rpc SolicitarPropuesta(DistribucionChunks) returns (DistribucionChunks) {}
 }
 
