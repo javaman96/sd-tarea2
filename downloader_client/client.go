@@ -85,7 +85,7 @@ func main() {
   //////// Conectarse como cliente al NameService ////////
   //------------------------------------------------------
   var conn *grpc.ClientConn
-  conn, err := grpc.Dial(":9009", grpc.WithInsecure())
+  conn, err := grpc.Dial("10.10.28.124:9000", grpc.WithInsecure())
   if err != nil {
     log.Fatalf("Could not connect: %s", err)
   }

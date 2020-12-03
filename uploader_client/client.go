@@ -69,7 +69,7 @@ func main() {
   // Conectarse como cliente al servidor1 //
   
   var conn *grpc.ClientConn
-  conn, err := grpc.Dial(":9001", grpc.WithInsecure())
+  conn, err := grpc.Dial("10.10.28.121:9000", grpc.WithInsecure())
   if err != nil {
     log.Fatalf("Could not connect to 9001: %s", err)
   }

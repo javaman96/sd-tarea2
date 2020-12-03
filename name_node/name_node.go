@@ -13,12 +13,14 @@ import (
 
 func main() {
 
-	lis, err := net.Listen("tcp", ":9009")
+	IPMaquina := 
+
+	lis, err := net.Listen("tcp", IPMaquina)
 	if err != nil {
-		log.Fatalf("Failed to listen on port 9009: %v", err)
+		log.Fatalf("Failed to listen on port 9000: %v", err)
 	}
 
-	fmt.Println("Escuchando en el puerto 9009...")
+	fmt.Println("Escuchando en el puerto 9000...")
 
 	// Setear server
 	s := name_service.Server{}
@@ -28,7 +30,7 @@ func main() {
 
 	////// Servicio de clientes ///////
 	if err = grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server on port 9009: %v", err)
+		log.Fatalf("Failed to serve gRPC server on port 9000: %v", err)
 	}
 	fmt.Println("Server corriendo...")
 }

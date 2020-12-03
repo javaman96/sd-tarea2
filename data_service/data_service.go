@@ -16,10 +16,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-const ip_datanode_1 = ":9001"
-const ip_datanode_2 = ":9002"
-const ip_datanode_3 = ":9003"
-const ip_namenode = ":9009"
+const ip_datanode_1 = "10.10.28.121:9000"
+const ip_datanode_2 = "10.10.28.122:9000"
+const ip_datanode_3 = "10.10.28.123:9000"
+const ip_namenode = "10.10.28.124:9000"
 
 // Guardar los chunks en el disco de la machina
 func (s *Server) save_chunks(chunk_name string, data []byte) {
@@ -45,7 +45,7 @@ func (s *Server) read_chunks(currentChunkFileName string) ([]byte, error) {
     if err != nil {
         fmt.Println(err)
     }
-    
+
     newFileChunk, err := os.Open(path)
 
     if err != nil {        
