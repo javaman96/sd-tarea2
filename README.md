@@ -47,15 +47,19 @@ OBS: Makefile correra cada nodo dependiendo de en que maquina nos encontremos.
 ## Funcionamiento a grandes rasgos
 
 
-Para implementar las funcionalidades de los dos tipos de servidores, name_node y data_node, se crearon dos servicios grpc, name_service y data_service. 
+Para implementar las funcionalidades de los dos tipos de servidores, name_node y data_node, se crearon dos servicios grpc, name_service y data_service.
 
 Para cargar libros, estos se separan en chunks, y son enviados siempre al datanode1 (data node de la primera maquina), quien hace la función de maestro dentro de los data nodes (Se nos había dicho que era una opción viable). Este datanode genera una propuesta, y dependiendo de si el sistema es distribuido o centralizado se envía al namenode o a los datanodes para ser validada. La propuesta contiene las IP’s de los data nodes a las que deben ir estos nodos, y el datanode1 los reparte.
 
-El descargador de libros tiene las funcionalidades de pedir la lista de libros, y de pedir descargar un libro en específico. 
+El descargador de libros tiene las funcionalidades de pedir la lista de libros, y de pedir descargar un libro en específico.
 
 El namenode se encarga de manejar el archivo logs.txt. Esta puede sacar el listado de libros, sacar los chunks con sus ips de un libro en específico, y tambien escribir los chunks de un nuevo libro que se sube al sistema.
 
 Los datanodes se encargan de escribir en memoria los chunks, de recibir los chunks a ser subidos de parte de los clientes, generan propuestas (listas de chunks+ip) y también se encargan de leer chunks solicitados y devolverlos al cliente de descargas.
+
+El descargador de libros tiene las funcionalidades de pedir la lista de libros, y de pedir descargar un libro en específico, se descargan en formato comprimido zip.  El descargador tiene las funcionalidades de pedir un libro pdf y solicitar sus chunks a los datanodes. El nombre de los pdf no debe contener espacios o caracteres muy raros para que funcione (Tanto en el uploader como en el downloader)
+
+Para un mejor manejo del nombre de los libros, este se pasó a hexadicemal con un codificador, de manera que los caracteres fuera de este formato no interfirieran en el manejo del nombre (Por ejemplo los guiones bajos). Los chunks se nombraron de la siguiente manera: “nombrelibro_parte”, con el nombrelibro en formato hexadecimal. Por ejemplo los chunks de un libro llamado “el_mago_de_oz” podria ser “656c5f6d61676f5f64655f6f7aa_0”, con el “_0” indicando que es la primera parte.
 
 ## Detalles y Consideraciones
 
@@ -81,7 +85,7 @@ de los archivos client.go correspondientes
 
 + Máquina 2: máquina con el data_node_2
 	+ ip:         10.10.28.122
-	+ contraseña: eDtGthpFSmaypHj	
+	+ contraseña: eDtGthpFSmaypHj
 
 
 + Máquina 3: máquina con el data_node_3

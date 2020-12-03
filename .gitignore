@@ -1,2 +1,4 @@
 *.pdf
 *.zip
+
+!Informe.pdf
