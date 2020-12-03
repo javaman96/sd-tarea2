@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
+    "bufio"
 	"github.com/dcordova/sd_tarea2/name_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -36,15 +36,20 @@ func (s *Server) save_chunks(chunk_name string, data []byte) {
 }
 
 
-func (s *Server) read_chunks(currentChunkFileName string) {
-    
-    //read a chunk
-    //currentChunkFileName := input + "_" + strconv.FormatUint(j, 10)
+func (s *Server) read_chunks(currentChunkFileName string) ([]byte, error) {    
 
-    newFileChunk, err := os.Open(currentChunkFileName)
+    //read a chunk    
+    path := "data_service/chunks/" + currentChunkFileName+".chunk"
 
+    err := os.Chmod(path, 0777)
     if err != nil {
-        return err
+        fmt.Println(err)
+    }
+    
+    newFileChunk, err := os.Open(path)
+
+    if err != nil {        
+        return nil, err
         os.Exit(1)
     }
 
@@ -53,7 +58,7 @@ func (s *Server) read_chunks(currentChunkFileName string) {
     chunkInfo, err := newFileChunk.Stat()
 
     if err != nil {
-        return err
+        return nil, err
         os.Exit(1)
     }
 
@@ -71,10 +76,10 @@ func (s *Server) read_chunks(currentChunkFileName string) {
     _, err = reader.Read(chunkBufferBytes)
 
     if err != nil {
-        return err
+        return nil, err
         os.Exit(1)
     }  
-    return chunkBufferBytes
+    return chunkBufferBytes, nil
 }
 
 
@@ -200,8 +205,11 @@ func (s *Server) SendChunks(ctx context.Context, chunk *Chunk) (*Message, error)
     return &Message{Body: "Recibido!"}, nil
 }
 
-func (s *Server) RecuperarChunks(ctx context.Context, message *Message) (*Chunk, error) {
+func (s *Server) RecuperarChunks(ctx context.Context, chunk_id *Message) (*Chunk, error) {
 
-    data := s.read_chunks(string(chunk.Id))    
-    return &Chunk{Id: message, Data: data}, nil
+    data, err := s.read_chunks(string(chunk_id.Body))
+    if err != nil {
+        return nil, err
+    }    
+    return &Chunk{Id: chunk_id.Body, Data: data}, nil
 }

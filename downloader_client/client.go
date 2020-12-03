@@ -9,11 +9,13 @@ import (
   "github.com/dcordova/sd_tarea2/name_service"
   "encoding/hex"
   "strings"
+  "archive/zip"
+  "path/filepath"
   //"bufio"
   //"encoding/csv"
   "fmt"
-  //"io"
-  //"os"
+  "io"
+  "os"
   //"strconv" // Conversion de strings a int y viceversa
 )
 
@@ -43,7 +45,7 @@ func unzip(zipfile string){
             os.MkdirAll(path, f.Mode())
             fmt.Println("Creating directory", path)
         } else {
-            writer, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, f.Mode())
+            writer, err := os.OpenFile(f.Name, os.O_WRONLY|os.O_CREATE, f.Mode())
 
             if err != nil {
                 fmt.Println(err)
@@ -73,7 +75,7 @@ func encodeString(titulo string) string {
 
 // Recibe nombre del libro, retorna id del chunk
 func chunk_id(name_n string) (string) {
-  sub := strings.Split(r, "_")
+  sub := strings.Split(name_n, "_")
   return sub[len(sub)-1]
 }
 
@@ -83,7 +85,7 @@ func main() {
   //////// Conectarse como cliente al NameService ////////
   //------------------------------------------------------
   var conn *grpc.ClientConn
-  conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+  conn, err := grpc.Dial(":9009", grpc.WithInsecure())
   if err != nil {
     log.Fatalf("Could not connect: %s", err)
   }
@@ -144,22 +146,23 @@ func main() {
       if err != nil {
         log.Fatalf("Error al llamar a PedirChunksLibro: %s", err)
       }  
-
-      //fmt.Println(chunk_name)
-      newFileName := "downloader_client/downloads/" + input+".zip"
+      
+      newFileName := "downloader_client/downloads/" + strings.Split(input,".pdf")[0]+".zip"
 
       // create file
-      if err := os.MkdirAll(filepath.Dir(newFileName), 0777); err != nil {
-        log.Fatal(err)
-      }      
+      _, err = os.Create(newFileName)
 
+      if err != nil {
+          fmt.Println(err)
+          os.Exit(1)
+      }     
+      
       // set the newFileName file to APPEND MODE!!
       // open files r and w
 
-      file, err := os.OpenFile(newFileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-
+      file, err := os.OpenFile(newFileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)      
       if err != nil {
-        fmt.Println(err)
+        log.Fatal(err)
         os.Exit(1)
       }    
 
@@ -180,53 +183,20 @@ func main() {
         c2 := data_service.NewDataServiceClient(conn2)
 
         
-        currentChunkFileName, err = c2.RecuperarChunks(context.Background(), in_hex)
+        currentChunkFileName, err := c2.RecuperarChunks(context.Background(), &data_service.Message{Body:in_hex})
         if err != nil {
           log.Fatalf("Error when calling Server "+chunk.Ipmaquina+": %s", err)
         }   
 
         //----------------------------------------//
         ///////////// RECOMBINAR CHUNKS ////////////
-        //----------------------------------------//
-
-        newFileChunk, err := os.Open(currentChunkFileName)
-
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
-
-        defer newFileChunk.Close()
-
-        chunkInfo, err := newFileChunk.Stat()
-
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
-
-        // calculate the bytes size of each chunk
-        // we are not going to rely on previous data and constant
-
-        var chunkSize int64 = chunkInfo.Size()
-        chunkBufferBytes := make([]byte, chunkSize)
-
-        
-
-        // read into chunkBufferBytes
-        reader := bufio.NewReader(newFileChunk)
-        _, err = reader.Read(chunkBufferBytes)
-
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
+        //----------------------------------------//        
 
         // DON't USE ioutil.WriteFile -- it will overwrite the previous bytes!
         // write/save buffer to disk
         //ioutil.WriteFile(newFileName, chunkBufferBytes, os.ModeAppend)
 
-        _, err := file.Write(chunkBufferBytes)
+        _, err = file.Write(currentChunkFileName.Data)
 
         if err != nil {
             fmt.Println(err)
@@ -240,24 +210,24 @@ func main() {
         // can be resource hogging if the chunk size is huge.
         // also a good practice to clean up your own plate after eating
 
-        chunkBufferBytes = nil // reset or empty our buffer        
+        currentChunkFileName = nil // reset or empty our buffer        
       } 
 
       // Descomprimir
       unzip(newFileName)
 
       // Delete remaining zip files
-      chunk_dir, err = os.Open("downloader_client/downloads/")
+      chunk_dir, err := os.Open("downloader_client/downloads/")
       if err != nil {
         log.Fatalf("failed opening directory: %s", err)
       }
 
-      chunk_list,_ = chunk_dir.Readdirnames(0) // 0 to read all files and folders
+      chunk_list,_ := chunk_dir.Readdirnames(0) // 0 to read all files and folders
 
       for _, name := range chunk_list {
-        fmt.Println("name: ", name)
+        
         if strings.Contains(name, ".zip") {
-          fmt.Println("BORRANDO zips")
+          fmt.Println("BORRANDO:", name)
           os.Remove(name)
         }
       }
